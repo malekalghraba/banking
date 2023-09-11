@@ -2,6 +2,7 @@ version: '3'
 
 services:
   mysql:
+    image: malekghraba/mysql:latest
     build: 
       context: ./mysql
       dockerfile: Dockerfile.mysql
@@ -20,6 +21,7 @@ services:
       - backendNetwork
 
   backend:  # Updated service name to lowercase 'backend'
+   image: malekghraba/my-backend:latest
     build:
       context: ./BACKEND
       dockerfile: Dockerfile
@@ -36,6 +38,7 @@ services:
       - frontendNetwork
 
   frontend:
+   image: malekghraba/my-frontend:latest
     build:
       context: ./FRONTEND
       dockerfile: Dockerfile
