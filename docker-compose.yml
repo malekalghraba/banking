@@ -39,7 +39,7 @@ services:
 
   frontend:
    image: malekghraba/my-frontend:latest
-    build:
+   build:
       context: ./FRONTEND
       dockerfile: Dockerfile
       args:
