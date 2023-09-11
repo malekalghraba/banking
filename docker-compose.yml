@@ -36,7 +36,7 @@ services:
       - frontendNetwork
 
   frontend:
-   build:
+    build:
       context: ./FRONTEND
       dockerfile: Dockerfile 
     container_name: my-frontend
