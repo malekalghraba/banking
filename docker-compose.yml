@@ -5,6 +5,8 @@ services:
     build: 
       context: ./mysql
       dockerfile: Dockerfile.mysql
+      args:
+        - IMAGE_TAG=my-mysql:latest
     container_name: my-mysql
     restart: unless-stopped
     environment:
@@ -21,6 +23,8 @@ services:
     build:
       context: ./BACKEND
       dockerfile: Dockerfile
+      args:
+        - IMAGE_TAG=my-backend:latest
     container_name: BACKEND
     ports:
       - 8086:8086
@@ -35,6 +39,8 @@ services:
     build:
       context: ./FRONTEND
       dockerfile: Dockerfile
+      args:
+        - IMAGE_TAG=my-frontend:latest
     container_name: FRONTEND
     restart: unless-stopped
     ports: 
