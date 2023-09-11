@@ -20,14 +20,14 @@ services:
     networks:
       - backendNetwork
 
-  backend:  # Updated service name to lowercase 'backend'
+  backend:  
    image: malekghraba/my-backend:latest
    build:
       context: ./BACKEND
       dockerfile: Dockerfile
       args:
         - IMAGE_TAG=my-backend:latest
-    container_name: BACKEND
+    container_name: my-backend
     ports:
       - 8086:8086
     restart: unless-stopped   
@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile
       args:
         - IMAGE_TAG=my-frontend:latest
-    container_name: FRONTEND
+    container_name: my-frontend
     restart: unless-stopped
     ports: 
       - 4200:80
