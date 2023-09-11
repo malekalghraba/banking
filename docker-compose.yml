@@ -22,7 +22,7 @@ services:
 
   backend:  # Updated service name to lowercase 'backend'
    image: malekghraba/my-backend:latest
-    build:
+   build:
       context: ./BACKEND
       dockerfile: Dockerfile
       args:
