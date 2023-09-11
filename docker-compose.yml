@@ -38,8 +38,7 @@ services:
   frontend:
    build:
       context: ./FRONTEND
-      dockerfile: Dockerfile
-      
+      dockerfile: Dockerfile 
     container_name: my-frontend
     restart: unless-stopped
     ports: 
