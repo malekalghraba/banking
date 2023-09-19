@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone repo') {
             steps {
-                git url: 'https://github.com/malekalghraba/EBANK-FULLSTACK', branch: 'main'
+                git url: 'https://github.com/malekalghraba/banking', branch: 'main'
             }
         }
 
@@ -12,10 +12,8 @@ pipeline {
                 dir('FRONTEND') {
                     sh '/usr/bin/npm install'
                     sh '/usr/bin/npm run build'
-                }
-            }
-        }
-        /*
+                }} }
+        
          stage('Run SonarQube Analysis') {
     steps {
         dir('FRONTEND') {
@@ -23,24 +21,16 @@ pipeline {
                 def scannerHome = tool 'SonarQube'
 
                 withSonarQubeEnv('SonarQube') {
-                   sh "${scannerHome}/bin/sonar-scanner "
-                }
-            }
-        }
-    }
-}
+                   sh "${scannerHome}/bin/sonar-scanner " }}}}}
 
     }
     stage('Test frontend') {
             steps {
                 dir('FRONTEND') {
                     sh 'npm run test'
-                }
-            }
-        } 
+                }}} 
 
-        
-        stage('build backend'){
+         stage('build backend'){
             parallel{ 
                 stage('Compile ') {
             steps {
@@ -113,22 +103,14 @@ pipeline {
                 }
             }
         }}
-        
+/*        
  stage ('Analysis') { steps{ dir('BACKEND'){ script{
         def mvnHome = tool 'maven'
-         
-     
-       
         def maven = scanForIssues tool: [$class: 'MavenConsole']
         publishIssues issues:[maven]
       
-    }}}}
-         */
-
-    
-       
-
-         
+    }}}} */
+           
         stage('Build and tag Images') {
             steps {
                   sh "docker login -u malekghraba -p fra10malek"
