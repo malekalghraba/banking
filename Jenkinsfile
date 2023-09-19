@@ -1,4 +1,12 @@
-pipeline {
+pipeline {     environment { 
+
+        registry = "malekghraba/ebank" 
+
+        registryCredential = 'dockerhub-id' 
+
+        dockerImage = '' 
+
+    }
     agent any
     stages {
         stage('Clone repo') {
@@ -12,8 +20,10 @@ pipeline {
                 dir('FRONTEND') {
                     sh '/usr/bin/npm install'
                     sh '/usr/bin/npm run build'
-                }} }
-        
+                }
+            }
+        }
+        /*
          stage('Run SonarQube Analysis') {
     steps {
         dir('FRONTEND') {
@@ -21,16 +31,24 @@ pipeline {
                 def scannerHome = tool 'SonarQube'
 
                 withSonarQubeEnv('SonarQube') {
-                   sh "${scannerHome}/bin/sonar-scanner " }}}}}
+                   sh "${scannerHome}/bin/sonar-scanner "
+                }
+            }
+        }
+    }
+}
 
     }
     stage('Test frontend') {
             steps {
                 dir('FRONTEND') {
                     sh 'npm run test'
-                }}} 
+                }
+            }
+        } 
 
-         stage('build backend'){
+        
+        stage('build backend'){
             parallel{ 
                 stage('Compile ') {
             steps {
@@ -103,40 +121,49 @@ pipeline {
                 }
             }
         }}
-/*        
+        
  stage ('Analysis') { steps{ dir('BACKEND'){ script{
         def mvnHome = tool 'maven'
+         
+     
+       
         def maven = scanForIssues tool: [$class: 'MavenConsole']
         publishIssues issues:[maven]
       
-    }}}} */
-           
+    }}}}
+         */
+
+    
+  stage('docker compose'){
+     steps{
+            sh"docker-compose build"
+
+ 
+    }}       
+
+         
         stage('Build and tag Images') {
             steps {
-                  sh "docker login -u malekghraba -p fra10malek"
-                sh 'docker-compose build'
-                sh'docker tag ebank-fullstack_frontend:latest malekghraba/frontend:1'
-                 sh'docker tag ebank-fullstack_backend:latest malekghraba/backend:1'
-                sh'docker tag ebank-fullstack_mysql:latest malekghraba/mysql:1'
+                  
+                
+                sh'docker tag ebank-fullstack_frontend:latest malekghraba/frontend:latest'
+                 sh'docker tag ebank-fullstack_backend:latest malekghraba/backend:latest'
+                sh'docker tag ebank-fullstack_mysql:latest malekghraba/mysql:latest'
 
             }
         }
           stage('push Images to dockerhub') {
             steps {
-               
-            sh'docker push malekghraba/frontend:1'
-            sh'docker push malekghraba/backend:1'
-            sh'docker push malekghraba/mysql:1'
-            }}
+            
+                script { 
+              docker.withRegistry( '', registryCredential ) {
+    
+            sh'docker push malekghraba/frontend:latest'
+            sh'docker push malekghraba/backend:latest'
+            sh'docker push malekghraba/mysql:latest'
+            }}}}
 
-    stage('Start Minikube') {
-            steps {
-                script {
-                    // Start Minikube with the Docker driver
-                    sh 'minikube start --driver=docker'
-                }
-            }
-        }
+    
 
         stage('Deploy to Minikube') {
             steps { 
@@ -144,21 +171,11 @@ pipeline {
              script{
                 // Apply Kubernetes Deployment and Service manifests.
             
-                sh 'kubectl create -f mysql-deployment.yaml'
-                sh 'kubectl create -f backend-deployment.yaml'
-                sh 'kubectl create -f frontend-deployment.yaml'
-                sh 'kubectl create -f mysql-service.yaml'
-                sh 'kubectl create -f frontend-service.yaml'
-        }}}
-         stage('Stop Minikube') {
-            steps {
-                script {
-                    // Stop Minikube after the pipeline is complete
-                    sh 'minikube stop'
-                    sh 'minikube delete'
-                }
-            }
-        }
+                def ansiblePlaybookCmd = """
+            ansible-playbook -i localhost, deployment.yaml
+            """
+            sh ansiblePlaybookCmd  }}}
+         
    
 }
     }
