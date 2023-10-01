@@ -46,7 +46,7 @@ pipeline {     environment {
                 }
             }
         } 
-
+*/
         
         stage('build backend'){
             parallel{ 
@@ -101,7 +101,7 @@ pipeline {     environment {
         def cpd = scanForIssues tool: [$class: 'Cpd'], pattern: '/target/cpd.xml'
         publishIssues issues:[cpd] }}}}
                 
-              
+     /*         
         stage('SonarQube Analysis') {
                 steps {
         dir('BACKEND') { script{
@@ -110,7 +110,7 @@ pipeline {     environment {
       sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=back -Dsonar.projectName='back'"
     }
   }}
-              }} }}
+              }} }} */
 
  stage("Deploy Artifact To Nexus") {
             steps { dir('BACKEND'){
@@ -124,25 +124,18 @@ pipeline {     environment {
         
  stage ('Analysis') { steps{ dir('BACKEND'){ script{
         def mvnHome = tool 'maven'
-         
-     
-       
         def maven = scanForIssues tool: [$class: 'MavenConsole']
         publishIssues issues:[maven]
       
     }}}}
-         */
+        
 
     
   stage('docker compose'){
      steps{
             sh"docker-compose build"
-
- 
-    }}       
-
-         
-        stage('Build and tag Images') {
+}}       
+   stage('Build and tag Images') {
             steps {
                   
                 
@@ -162,20 +155,13 @@ pipeline {     environment {
             sh'docker push malekghraba/backend:latest'
             sh'docker push malekghraba/mysql:latest'
             }}}}
-
-    
-
-        stage('Deploy to Minikube') {
-            steps { 
-             
-             script{
+ stage('Deploy to pods') {
+            steps {  script{
                 // Apply Kubernetes Deployment and Service manifests.
             
                 def ansiblePlaybookCmd = """
             ansible-playbook -i localhost, deployment.yaml
             """
             sh ansiblePlaybookCmd  }}}
-         
-   
 }
     }
